@@ -19,6 +19,21 @@ const variables: Record<string, string> = {
   M109A_Status: "M3100,1",
   M045D_Status: "M3300,1",
   M129A_Status: "M3500,1",
+  M126A_Status: "M5300,1",
+  M125A_Status: "M5500,1",
+  M097A_Status: "M1700,1",
+  M124A_Status: "M1500,1",
+  M130A_Status: "M1300,1",
+  M131A_Status: "M1900,1",
+  M133A_Status: "M4100,1",
+  M134A_Status: "M3900,1",
+  M135A_Status: "M4700,1",
+  M139A_Status: "M3700,1",
+  M145A_Status: "M5100,1",
+  M132A_Status: "M2100,1"
+  
+
+
 };
 
 const tags = Object.keys(variables);

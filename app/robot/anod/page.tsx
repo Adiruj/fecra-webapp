@@ -15,7 +15,7 @@ import { title } from "@/components/primitives";
 export default function DocsPage() {
   const pathname = usePathname()
 
-  const [totalRB, setTotalRB] = useState(45)
+  const [totalRB, setTotalRB] = useState(49)
   const [runRB, setRunRB] = useState(0)
   const [stopRB, setStopRB] = useState(0)
 
@@ -54,25 +54,11 @@ export default function DocsPage() {
   const [M109A_Status, setM109A_Status] = useState(false)
   const [M045D_Status, setM045D_Status] = useState(false)
   const [M129A_Status, setM129A_Status] = useState(false)
-  const [M126A_Status, setM126A_Status] = useState(false)
-  const [M125A_Status, setM125A_Status] = useState(false)
-  const [M097A_Status, setM097A_Status] = useState(false)
-  const [M124A_Status, setM124A_Status] = useState(false)
-  const [M130A_Status, setM130A_Status] = useState(false)
-  const [M131A_Status, setM131A_Status] = useState(false)
-  const [M133A_Status, setM133A_Status] = useState(false)
-  const [M134A_Status, setM134A_Status] = useState(false)
-  const [M135A_Status, setM135A_Status] = useState(false)
-  const [M139A_Status, setM139A_Status] = useState(false)
-  const [M145A_Status, setM145A_Status] = useState(false)
-  const [M132A_Status, setM132A_Status] = useState(false)
-
 
   // PLC IP Address 192.168.126.243
   const [M141A_Status, setM141A_Status] = useState(false)
   const [M137A_Status, setM137A_Status] = useState(false)
   const [M117A_Status, setM117A_Status] = useState(false)
-  const [M159A_Status, setM159A_Status] = useState(false)
 
 
   useEffect(() => {
@@ -132,20 +118,6 @@ export default function DocsPage() {
             setM109A_Status(data.values.M109A_Status);
             setM045D_Status(data.values.M045D_Status);
             setM129A_Status(data.values.M129A_Status);
-            setM126A_Status(data.values.M126A_Status);
-            setM125A_Status(data.values.M125A_Status);
-            setM097A_Status(data.values.M097A_Status);
-            setM124A_Status(data.values.M124A_Status);
-            setM130A_Status(data.values.M130A_Status);
-            setM131A_Status(data.values.M131A_Status);
-            setM133A_Status(data.values.M133A_Status);
-            setM134A_Status(data.values.M134A_Status);
-            setM135A_Status(data.values.M135A_Status);
-            setM139A_Status(data.values.M139A_Status);
-            setM145A_Status(data.values.M145A_Status);
-            setM132A_Status(data.values.M132A_Status)
-
-
           })
           .catch(error => console.error("Fetch error:", error))
 
@@ -155,7 +127,6 @@ export default function DocsPage() {
             setM141A_Status(data.values.M141A_Status);
             setM137A_Status(data.values.M137A_Status);
             setM117A_Status(data.values.M117A_Status);
-            setM159A_Status(data.values.M159A_Status)
           })
           .catch(error => console.error("Fetch error:", error))
 
@@ -206,29 +177,7 @@ export default function DocsPage() {
       M108A_Status,
       M109A_Status,
       M129A_Status,
-      M045D_Status,
-      M126A_Status,
-      M125A_Status,
-      M097A_Status,
-      M124A_Status,
-      M130A_Status,
-      M131A_Status,
-      M159A_Status,
-      M133A_Status,
-      M134A_Status,
-      M135A_Status,
-      M139A_Status,
-      M145A_Status,
-
-      M137A_Status,
-      M117A_Status,
-      M132A_Status
-
-      
-
-
-
-
+      M045D_Status
     ];
     const countRBRun = statusRB.filter(status => status === true).length;
     //console.log(statusRB)
@@ -241,9 +190,7 @@ export default function DocsPage() {
     M146A_Status, M127A_Status, M144A_Status, M138A_Status, M111A_Status,
     M136A_Status, M140A_Status, M112A_Status, M113A_Status, M160A_Status, M161A_Status,
     M121A_Status, M122A_Status,M158A_Status,M141A_Status,M110A_Status,M108A_Status,
-    M109A_Status,M129A_Status,M045D_Status,M126A_Status,M125A_Status,M097A_Status,
-    M130A_Status,M131A_Status,M159A_Status,M133A_Status,M134A_Status,M135A_Status,M139A_Status,
-    M145A_Status,M132A_Status,M137A_Status,M117A_Status ])
+  M109A_Status,M129A_Status,M045D_Status])
 
   return (
     <div className="flex flex-col pt-[60px]" >
@@ -396,87 +343,6 @@ export default function DocsPage() {
             </Tooltip>
           </div>
 
-          <div className="z-10 absolute top-[270px] left-[505px] transform -translate-x-1/2 -translate-y-1/2">
-            <Tooltip content="M126A" placement="top">
-              {M126A_Status === true ? <Button className="text-cyan-50 w-10" color="success" radius="full" size="sm" >RUN</Button> : <Button className="text-cyan-50" color="danger" radius="full" size="sm"  >STOP</Button>}
-            </Tooltip>
-          </div>
-
-          <div className="z-10 absolute top-[188px] left-[495px] transform -translate-x-1/2 -translate-y-1/2">
-            <Tooltip content="M125A" placement="top">
-              {M125A_Status === true ? <Button className="text-cyan-50 w-10" color="success" radius="full" size="sm" >RUN</Button> : <Button className="text-cyan-50" color="danger" radius="full" size="sm"  >STOP</Button>}
-            </Tooltip>
-          </div>
-
-          <div className="z-10 absolute top-[557px] left-[784px] transform -translate-x-1/2 -translate-y-1/2">
-            <Tooltip content="M097A" placement="top">
-              {M097A_Status === true ? <Button className="text-cyan-50 w-10" color="success" radius="full" size="sm" >RUN</Button> : <Button className="text-cyan-50" color="danger" radius="full" size="sm"  >STOP</Button>}
-            </Tooltip>
-          </div>
-
-          <div className="z-10 absolute top-[463px] left-[780px] transform -translate-x-1/2 -translate-y-1/2">
-            <Tooltip content="M124A" placement="top">
-              {M124A_Status === true ? <Button className="text-cyan-50 w-10" color="success" radius="full" size="sm" >RUN</Button> : <Button className="text-cyan-50" color="danger" radius="full" size="sm"  >STOP</Button>}
-            </Tooltip>
-          </div>
-
-          <div className="z-10 absolute top-[360px] left-[780px] transform -translate-x-1/2 -translate-y-1/2">
-            <Tooltip content="M130A" placement="top">
-              {M130A_Status === true ? <Button className="text-cyan-50 w-10" color="success" radius="full" size="sm" >RUN</Button> : <Button className="text-cyan-50" color="danger" radius="full" size="sm"  >STOP</Button>}
-            </Tooltip>
-          </div>
-
-          <div className="z-10 absolute top-[469px] left-[666px] transform -translate-x-1/2 -translate-y-1/2">
-            <Tooltip content="M131A" placement="top">
-              {M131A_Status === true ? <Button className="text-cyan-50 w-10" color="success" radius="full" size="sm" >RUN</Button> : <Button className="text-cyan-50" color="danger" radius="full" size="sm"  >STOP</Button>}
-            </Tooltip>
-          </div>
-
-          <div className="z-10 absolute top-[357px] left-[679px] transform -translate-x-1/2 -translate-y-1/2">
-            <Tooltip content="M159A" placement="top">
-              {M159A_Status === true ? <Button className="text-cyan-50 w-10" color="success" radius="full" size="sm" >RUN</Button> : <Button className="text-cyan-50" color="danger" radius="full" size="sm"  >STOP</Button>}
-            </Tooltip>
-          </div>
-
-          <div className="z-10 absolute top-[345px] left-[30px] transform -translate-x-1/2 -translate-y-1/2">
-            <Tooltip content="M133A" placement="top">
-              {M133A_Status === true ? <Button className="text-cyan-50 w-10" color="success" radius="full" size="sm" >RUN</Button> : <Button className="text-cyan-50" color="danger" radius="full" size="sm"  >STOP</Button>}
-            </Tooltip>
-          </div>
-
-          <div className="z-10 absolute top-[400px] left-[30px] transform -translate-x-1/2 -translate-y-1/2">
-            <Tooltip content="M134A" placement="top">
-              {M134A_Status === true ? <Button className="text-cyan-50 w-10" color="success" radius="full" size="sm" >RUN</Button> : <Button className="text-cyan-50" color="danger" radius="full" size="sm"  >STOP</Button>}
-            </Tooltip>
-          </div>
-
-          <div className="z-10 absolute top-[370px] left-[90px] transform -translate-x-1/2 -translate-y-1/2">
-            <Tooltip content="M135A" placement="top">
-              {M135A_Status === true ? <Button className="text-cyan-50 w-10" color="success" radius="full" size="sm" >RUN</Button> : <Button className="text-cyan-50" color="danger" radius="full" size="sm"  >STOP</Button>}
-            </Tooltip>
-          </div>
-
-          <div className="z-10 absolute top-[403px] left-[156px] transform -translate-x-1/2 -translate-y-1/2">
-            <Tooltip content="M139A" placement="top">
-              {M139A_Status === true ? <Button className="text-cyan-50 w-10" color="success" radius="full" size="sm" >RUN</Button> : <Button className="text-cyan-50" color="danger" radius="full" size="sm"  >STOP</Button>}
-            </Tooltip>
-          </div>
-
-          <div className="z-10 absolute top-[207px] left-[430px] transform -translate-x-1/2 -translate-y-1/2">
-            <Tooltip content="M145A" placement="top">
-              {M145A_Status === true ? <Button className="text-cyan-50 w-10" color="success" radius="full" size="sm" >RUN</Button> : <Button className="text-cyan-50" color="danger" radius="full" size="sm"  >STOP</Button>}
-            </Tooltip>
-          </div>
-
-          <div className="z-10 absolute top-[450px] left-[550px] transform -translate-x-1/2 -translate-y-1/2">
-            <Tooltip content="M132A" placement="top">
-              {M132A_Status === true ? <Button className="text-cyan-50 w-10" color="success" radius="full" size="sm" >RUN</Button> : <Button className="text-cyan-50" color="danger" radius="full" size="sm"  >STOP</Button>}
-            </Tooltip>
-          </div>
-
-
-
-
           {/*PLC IP Address 192.168.126.1 */}
           <div className="z-10 absolute top-[315px] left-[795px] transform -translate-x-1/2 -translate-y-1/2">
             <Tooltip content="M160A" placement="top">
@@ -514,7 +380,7 @@ export default function DocsPage() {
               {M141A_Status === true ? <Button className="text-cyan-50 w-10" color="success" radius="full" size="sm" >RUN</Button> : <Button className="text-cyan-50" color="danger" radius="full" size="sm">STOP</Button>}
             </Tooltip>
           </div>
-          <div className="z-10 absolute top-[320px] left-[635px] transform -translate-x-1/2 -translate-y-1/2">
+          <div className="z-10 absolute top-[330px] left-[635px] transform -translate-x-1/2 -translate-y-1/2">
             <Tooltip content="M137A" placement="top">
               {M137A_Status === true ? <Button className="text-cyan-50 w-10" color="success" radius="full" size="sm" >RUN</Button> : <Button className="text-cyan-50" color="danger" radius="full" size="sm">STOP</Button>}
             </Tooltip>

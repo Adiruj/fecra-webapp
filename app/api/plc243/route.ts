@@ -7,6 +7,7 @@ const variables: Record<string, string> = {
   M141A_Status: "M0,1",
   M137A_Status: "M300,1",
   M117A_Status: "M500,1",
+  M159A_Status: "M2300,1"
 };
 
 const tags = Object.keys(variables);
