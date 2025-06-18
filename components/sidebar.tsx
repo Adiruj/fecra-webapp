@@ -7,7 +7,7 @@ import { HomeIcon, UserIcon, ClipboardDocumentCheckIcon, ChevronUpIcon, Computer
 import { SideBarItem } from "./sidebar-item";
 import { SidebarMenu } from "./sidebar-menu";
 import { CollapseItem } from "./collapse-items";
-
+import { Sidebarlogo } from "./SideBarlogo";
 
 
 export const SidebarWrapper = () => {
@@ -41,9 +41,7 @@ export const SidebarWrapper = () => {
                 py-2"
             >
                 {/* Hearder */}
-                <div className="border-b p-5">
-                    <h1>RA-FEC Dept</h1>
-                </div>
+                <Sidebarlogo />
 
                 {/* Body */}
                 <div
@@ -60,13 +58,13 @@ export const SidebarWrapper = () => {
                         <SidebarMenu title="Main Menu">
                             <div className='space-y-2'>
                                 <SideBarItem
-                                    href="emp"
+                                    href="/emp"
                                     icon={pathname === '/emp' ? <UserIcon className="w-5 h-5 fill-blue-600" /> : <UserIcon className="w-5 h-5 fill-gray-500" />}
                                     isActive={pathname === '/emp'}
                                     title="Employee"
                                 />
                                 <SideBarItem
-                                    href="partlist"
+                                    href="/partlist"
                                     icon={pathname === '/partlist' ? <ClipboardDocumentCheckIcon className="w-5 h-5 fill-blue-600" /> : <ClipboardDocumentCheckIcon className="w-5 h-5 fill-gray-500" />}
                                     isActive={pathname === '/partlist'}
                                     title="Part List"
@@ -96,9 +94,9 @@ export const SidebarWrapper = () => {
 
                         <SidebarMenu title="Setting">
                             <SideBarItem
-                                href="emp"
-                                icon={pathname === '/emp' ? <UserIcon className="w-5 h-5 fill-blue-600" /> : <UserIcon className="w-5 h-5 fill-gray-500" />}
-                                isActive={pathname === '/emp'}
+                                href="/user"
+                                icon={pathname === '/user' ? <UserIcon className="w-5 h-5 fill-blue-600" /> : <UserIcon className="w-5 h-5 fill-gray-500" />}
+                                isActive={pathname === '/user'}
                                 title="User"
                             />
                         </SidebarMenu>

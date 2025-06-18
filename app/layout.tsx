@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   icons: {
-    icon: "/favicon.ico",
+    icon: "/favicon_FEC.ico",
   },
 };
 
@@ -50,7 +50,7 @@ export default function RootLayout({
 
             <div className="relative flex flex-col flex-1 overflow-hidden h-screen justify-center">
               <Navbar />
-              <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
+              <main className="container mx-auto max-w-7xl pt-6 px-6 flex-grow">
                 {children}
               </main>
               <footer className="w-full flex items-center justify-center py-3">
@@ -60,7 +60,7 @@ export default function RootLayout({
                   href="https://heroui.com?utm_source=next-app-template"
                   title="heroui.com homepage"
                 >
-                  <span className="text-default-600">Powered by</span>
+                  <span className="text-default-600">Develop by</span>
                   <p className="text-primary">NumChock</p>
                 </Link>
               </footer>

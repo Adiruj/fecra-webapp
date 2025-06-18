@@ -177,7 +177,9 @@ export default function DocsPage() {
       M108A_Status,
       M109A_Status,
       M129A_Status,
-      M045D_Status
+      M045D_Status,
+      M137A_Status,
+      M117A_Status
     ];
     const countRBRun = statusRB.filter(status => status === true).length;
     //console.log(statusRB)
@@ -190,7 +192,7 @@ export default function DocsPage() {
     M146A_Status, M127A_Status, M144A_Status, M138A_Status, M111A_Status,
     M136A_Status, M140A_Status, M112A_Status, M113A_Status, M160A_Status, M161A_Status,
     M121A_Status, M122A_Status,M158A_Status,M141A_Status,M110A_Status,M108A_Status,
-  M109A_Status,M129A_Status,M045D_Status])
+  M109A_Status,M129A_Status,M045D_Status,M137A_Status,M117A_Status])
 
   return (
     <div className="flex flex-col pt-[60px]" >
