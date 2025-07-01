@@ -1,50 +1,145 @@
-// /app/api/plc/route.ts
 import { NextResponse } from "next/server";
 
 const mc = require("mcprotocol");
 
 const variables: Record<string, string> = {
-  M115A_Status: "M100,1",
-  M142A_Status: "M120,1",
-  M143A_Status: "M140,1",
-  M151A_Status: "M160,1",
-  M156A_Status: "M180,1",
+  PLC4_Bit: "M100,100",
+  PLC4_Word_CT: "D2000,50",
+  PLC4_Word_Model: "D3000,50",
 };
 
+const bitMap: Record<string, { source: string; offset: number }> = {
+  M115A_Status: { source: "PLC4_Bit", offset: 0 },
+  M142A_Status: { source: "PLC4_Bit", offset: 20 },
+  M143A_Status: { source: "PLC4_Bit", offset: 40 },
+  M151A_Status: { source: "PLC4_Bit", offset: 60 },
+  M156A_Status: { source: "PLC4_Bit", offset: 80 },
+};
 
-const tags = ["M115A_Status", "M142A_Status", "M143A_Status" , "M151A_Status" , "M156A_Status"];
+const wordMap: Record<
+  string,
+  {
+    source: string;
+    offset: number;
+    isFloat?: boolean;
+    isPackedString?: boolean;
+    length?: number;
+  }
+> = {
+  M115A_CT: { source: "PLC4_Word_CT", offset: 40, isFloat: true }, //CT
+  M115A_Model: {
+    source: "PLC4_Word_CT",
+    offset: 50,
+    isPackedString: true,
+    length: 4,
+  }, //Model
 
-export async function GET() {
-  const result: Record<string, boolean> = {};
+  M142A_CT: { source: "PLC4_Word_CT", offset: 20, isFloat: true }, //CT
+  M142A_Model: {
+    source: "PLC4_Word_Model",
+    offset: 20,
+    isPackedString: true,
+    length: 4,
+  }, //Model
 
-  for (const tag of tags) {
-    const conn = new mc();
+  M143A_CT: { source: "PLC4_Word_CT", offset: 30, isFloat: true }, //CT
+  M143A_Model: {
+    source: "PLC4_Word_Model",
+    offset: 20,
+    isPackedString: true,
+    length: 4,
+  }, //Model
 
-    try {
-      const values = await new Promise<Record<string, boolean>>((resolve, reject) => {
-        conn.initiateConnection(
-          { host: "192.168.126.4", port: 2000, ascii: false },
-          () => {
-            conn.setTranslationCB((t: string) => variables[t]);
-            conn.addItems([tag]);
+  M151A_CT: { source: "PLC4_Word_CT", offset: 10, isFloat: true }, //CT
+  M151A_Model: {
+    source: "PLC4_Word_Model",
+    offset: 10,
+    isPackedString: true,
+    length: 4,
+  }, //Model
 
-            setTimeout(() => {
-              conn.readAllItems((err: any, values: Record<string, any>) => {
-                conn.dropConnection();
+  M156A_CT: { source: "PLC4_Word_CT", offset: 0, isFloat: true }, //CT
+  M156A_Model: {
+    source: "PLC4_Word_Model",
+    offset: 0,
+    isPackedString: true,
+    length: 4,
+  }, //Model
+};
 
-                if (err) return reject(err);
-                resolve(values);
-              });
-            }, 300);
-          }
-        );
-      });
+function wordToFloat(word1: number, word2: number): number {
+  const buffer = Buffer.alloc(4);
 
-      result[tag] = values[tag];
-    } catch (err: any) {
-      return NextResponse.json({ error: `Error reading ${tag}: ${err.message}` }, { status: 500 });
-    }
+  buffer.writeUInt16LE(word1 & 0xffff, 0);
+  buffer.writeUInt16LE(word2 & 0xffff, 2);
+
+  return buffer.readFloatLE(0);
+}
+
+function packedWordsToString(words: number[], charLength: number): string {
+  const chars: string[] = [];
+
+  for (const word of words) {
+    const low = word & 0xff; // ตัวอักษร 1 (น้อย)
+    const high = (word >> 8) & 0xff; // ตัวอักษร 2 (มาก)
+
+    chars.push(String.fromCharCode(low));
+    chars.push(String.fromCharCode(high));
   }
 
-  return NextResponse.json({ values: result });
+  return chars.join("").slice(0, charLength).replace(/\0/g, "").trim();
+}
+
+export async function GET(): Promise<Response> {
+  const conn = new mc();
+
+  return await new Promise((resolve) => {
+    conn.initiateConnection(
+      { host: "192.168.126.4", port: 2000, ascii: false },
+      () => {
+        conn.addItems(Object.values(variables));
+
+        conn.readAllItems((err: any, values: Record<string, any>) => {
+          conn.dropConnection();
+
+          if (err) {
+            return resolve(
+              NextResponse.json({ error: err.message }, { status: 500 })
+            );
+          }
+
+          const result: Record<string, boolean | number | string> = {};
+
+          for (const [name, { source, offset }] of Object.entries(bitMap)) {
+            result[name] = values[variables[source]][offset];
+          }
+
+          for (const [
+            name,
+            { source, offset, isFloat, isPackedString, length },
+          ] of Object.entries(wordMap)) {
+            const data = values[variables[source]];
+
+            if (isFloat) {
+              const word1 = data[offset];
+              const word2 = data[offset + 1];
+
+              result[name] = parseFloat(wordToFloat(word1, word2).toFixed(2));
+            } else if (isPackedString && length) {
+              const wordSegment = data.slice(
+                offset,
+                offset + Math.ceil(length / 2)
+              );
+
+              result[name] = packedWordsToString(wordSegment, length);
+            } else{
+                result[name] = data[offset]
+            }
+          }
+
+          resolve(NextResponse.json({ values: result }));
+        });
+      }
+    );
+  });
 }

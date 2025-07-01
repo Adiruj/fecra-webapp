@@ -3,12 +3,12 @@ import { useEffect, useState, useMemo } from "react";
 import { Table, TableHeader, TableColumn, TableBody, Button, TableRow, TableCell, Pagination } from "@heroui/react";
 import { Card, CardHeader, CardBody, CardFooter } from "@heroui/react";
 import { Autocomplete, AutocompleteItem } from "@heroui/react";
-import { Divider } from "@heroui/react";
+import { Divider, Link } from "@heroui/react";
 
 import { title } from "@/components/primitives";
 import { SearchIcon } from "@/components/icons";
 
-export const animals = [
+const animals = [
   { label: "Cat", key: "cat", description: "The second most popular pet in the world" },
   { label: "Dog", key: "dog", description: "The most popular pet in the world" },
   { label: "Elephant", key: "elephant", description: "The largest land animal" },
@@ -56,7 +56,6 @@ const columns = [
 ];
 
 export default function DocsPage() {
-
   type Part = {
     id: number;
     partname: string;
@@ -72,7 +71,23 @@ export default function DocsPage() {
     subtype: string;
   };
 
+  type Type = {
+    key: string;
+    label: string;
+  };
+
   const [partlistdata, setPartlistdata] = useState<Part[]>([]);
+  const [listtype, setListtype] = useState<Type[]>([]);
+  const [listbrand, setListbrand] = useState<Type[]>([]);
+  const [listmodel, setListmodel] = useState<Type[]>([]);
+
+  const [seltype, setSeltype] = useState("");
+  const [selbrand, setSelbrand] = useState("");
+  const [selmodel, setSelmodel] = useState("");
+
+  const [isclearSel, setClearSel] = useState(false);
+  const [isUpdate, setIsupdate] = useState(false);
+
   const [page, setPage] = useState(1)
   const rowsPerPage = 4
 
@@ -84,26 +99,136 @@ export default function DocsPage() {
     return partlistdata.slice(start, end)
   }, [page, partlistdata])
 
+  {/** Get All Partlist init */ }
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData_all = async () => {
       try {
-        await fetch('/api/radata/partlist')
+        await fetch('/api/radata/partlist/allitem')
           .then(res => res.json())
           .then(data => {
             setPartlistdata(data);
-            console.log(data)
           })
-          .catch(error => console.error("Fetch error:", error))
       } catch (error) {
-        console.error("Error fetching PLC data:", error);
+        setPartlistdata([])
       }
     }
 
-    fetchData()
+    fetchData_all();
   }, [])
+
+  {/** Update Sort Partlist */ }
+  useEffect(() => {
+    setPartlistdata(partlistdata)
+  }, [partlistdata])
+
+  {/** Get list Search */ }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await fetch('/api/radata/partlist/listtype')
+          .then(res => res.json())
+          .then(data => {
+            setListtype(data)
+          })
+
+        await fetch('/api/radata/partlist/listbrand')
+          .then(res => res.json())
+          .then(data => {
+            setListbrand(data)
+          })
+      } catch (error) {
+
+      }
+    }
+
+    fetchData();
+  }, [])
+
+  {/**Brand Fillter */ }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (seltype !== "") {
+          await fetch('/api/radata/partlist/listbrand?type=' + seltype)
+            .then(res => res.json())
+            .then(data => {
+              setListbrand(data)
+            })
+        }
+      } catch (error) {
+        setListbrand([])
+      }
+    }
+
+    fetchData();
+  }, [seltype])
+
+  {/**Model Fillter */ }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (seltype !== "" && selbrand !== "") {
+          await fetch('/api/radata/partlist/listmodel?type=' + seltype + "&brand=" + selbrand)
+            .then(res => res.json())
+            .then(data => {
+              setListmodel(data)
+            })
+        }
+      } catch (error) {
+        setListmodel([])
+      }
+    }
+
+    fetchData();
+  }, [seltype, selbrand])
+
+
+  const handleSubmit = () => {
+    if (selbrand === "" && selmodel === "" && seltype === "") {
+      
+      const fetchData_all = async () => {
+        try {
+          await fetch('/api/radata/partlist/allitem')
+            .then(res => res.json())
+            .then(data => {
+              setPartlistdata(data);
+            })
+        } catch (error) {
+          setPartlistdata([])
+        }
+      }
+
+      fetchData_all();
+    } else {
+      const fetchData_sort = async () => {
+        try {
+          await fetch('/api/radata/partlist/sortitem?type='+seltype+'&brand='+selbrand+'&model='+selmodel)
+            .then(res => res.json())
+            .then(data => {
+              setPartlistdata(data);
+            })
+        } catch (error) {
+          setPartlistdata([])
+        }
+      }
+
+      fetchData_sort();
+    }
+  }
+
+  const clearSel = () => {
+    setClearSel(true)
+    setSelbrand("")
+    setSelmodel("")
+    setSeltype("")
+  }
 
   return (
     <div className="flex flex-col gap-4">
+      <div className="flex flex-1 flex-col items-start">
+        <p className="text-4xl font-prompt text-white">PART LIST</p>
+        <p className="text-lg text-gray-100">รายการอุปกรณ์</p>
+      </div>
       <div>
         <Card className="px-2 py-2">
           <CardHeader>
@@ -117,25 +242,29 @@ export default function DocsPage() {
             <div className="flex flex-1 flex-row gap-4">
               <div className="flex flex-col flex-1 gap-2">
                 <h3 className="text-default-500 text-small">Type</h3>
-                <Autocomplete className="w-full" label="Select Type">
-                  {animals.map((animal) => (
-                    <AutocompleteItem key={animal.key}>{animal.label}</AutocompleteItem>
+                <Autocomplete className="w-full" label="Select Type" selectedKey={seltype} onSelectionChange={(key) => setSeltype(key as string)}>
+                  {listtype.map((type) => (
+                    <AutocompleteItem key={type.key}>{type.label}</AutocompleteItem>
                   ))}
                 </Autocomplete>
               </div>
               <div className="flex flex-col flex-1 gap-2">
                 <h3 className="text-default-500 text-small">Brand</h3>
-                <Autocomplete className="w-full" label="Select Brand">
-                  {animals.map((animal) => (
-                    <AutocompleteItem key={animal.key}>{animal.label}</AutocompleteItem>
+                <Autocomplete className="w-full"
+                  label="Select Brand"
+                  selectedKey={selbrand}
+                  onSelectionChange={(key) => setSelbrand(key as string)}
+                >
+                  {listbrand.map((brand) => (
+                    <AutocompleteItem key={brand.key}>{brand.label}</AutocompleteItem>
                   ))}
                 </Autocomplete>
               </div>
               <div className="flex flex-col flex-1 gap-2">
                 <h3 className="text-default-500 text-small">Model</h3>
-                <Autocomplete className="w-full" label="Select Model">
-                  {animals.map((animal) => (
-                    <AutocompleteItem key={animal.key}>{animal.label}</AutocompleteItem>
+                <Autocomplete className="w-full" label="Select Model" selectedKey={selmodel} onSelectionChange={(key) => setSelmodel(key as string)}>
+                  {listmodel.map((model) => (
+                    <AutocompleteItem key={model.key}>{model.label}</AutocompleteItem>
                   ))}
                 </Autocomplete>
               </div>
@@ -144,8 +273,8 @@ export default function DocsPage() {
           </CardBody>
           <CardFooter>
             <div className="w-full flex flex-row items-end justify-end gap-2">
-              <Button className=" text-white" color="danger">ล้างข้อมูล</Button>
-              <Button className=" text-white" color="success">ค้นหา</Button>
+              <Button className=" text-white" color="danger" onPress={clearSel}>ล้างข้อมูล</Button>
+              <Button className=" text-white" color="success" onPress={handleSubmit}>ค้นหา</Button>
             </div>
 
           </CardFooter>
@@ -153,6 +282,13 @@ export default function DocsPage() {
       </div>
       <div>
         <Card>
+          <CardHeader>
+            <div className="flex flex-row gap-2 items-center">
+              <SearchIcon />
+              <h2 className="text-2xl font-medium text-gray-700">ตารางข้อมูล</h2>
+            </div>
+          </CardHeader>
+          <Divider />
           <CardBody className="max-h-[400px] overflow-auto">
             <Table aria-label="Example table with dynamic content"
               bottomContent={
@@ -189,6 +325,7 @@ export default function DocsPage() {
         </Card>
       </div>
     </div>
+
   );
 }
 

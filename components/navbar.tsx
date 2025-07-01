@@ -9,14 +9,22 @@ import {
   NavbarItem,
   NavbarMenuItem,
 } from "@heroui/navbar";
-import { Avatar } from "@heroui/react";
+import { Avatar, Divider } from "@heroui/react";
+import { usePathname } from "next/navigation";
 import { Button } from "@heroui/button";
 import { Kbd } from "@heroui/kbd";
 import { Link } from "@heroui/link";
 import { Input } from "@heroui/input";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
+
+
+import { Navbarlogo } from "./NavBarlogo";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
@@ -29,7 +37,14 @@ import {
   Logo,
 } from "@/components/icons";
 
+
+
 export const Navbar = () => {
+  const router = useRouter();
+  const { data: session, status } = useSession();
+  const [isLogin, setIslogin] = useState(false)
+  const [isLogout, setIslogout] = useState(false)
+  const pathname = usePathname()
   const searchInput = (
     <Input
       aria-label="Search"
@@ -51,94 +66,76 @@ export const Navbar = () => {
     />
   );
 
+  const handleOut = async () => {
+    setIslogout(true)
+    await signOut({ redirect: false });
+    router.refresh();
+    setIslogin(false)
+    setIslogout(false)
+  }
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      setIslogin(true)
+    }
+  }, [session, status])
+
   return (
     <HeroUINavbar className="shadow-md" maxWidth="xl" position="sticky">
-      <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
-        <NavbarBrand as="li" className="gap-3 max-w-fit">
-          <NextLink className="flex justify-start items-center gap-1" href="/">
-            {/*<Logo />*/}
-            {/*<p className="font-bold text-inherit">ACME</p>*/}
-          </NextLink>
-        </NavbarBrand>
-        <ul className="hidden lg:flex gap-4 justify-start ml-2">
-          {/*siteConfig.navItems.map((item) => (
-            <NavbarItem key={item.href}>
-              <NextLink
-                className={clsx(
-                  linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium",
-                )}
-                color="foreground"
-                href={item.href}
-              >
-                {item.label}
-              </NextLink>
-            </NavbarItem>
-          ))*/}
-        </ul>
-      </NavbarContent>
-
-      <NavbarContent
-        className="hidden sm:flex basis-1/5 sm:basis-full"
-        justify="end"
-      >
-        <NavbarItem className="hidden sm:flex gap-2">
-          {/*<Link isExternal aria-label="Twitter" href={siteConfig.links.twitter}>
-            <TwitterIcon className="text-default-500" />
-          </Link>
-          <Link isExternal aria-label="Discord" href={siteConfig.links.discord}>
-            <DiscordIcon className="text-default-500" />
-          </Link>
-          <Link isExternal aria-label="Github" href={siteConfig.links.github}>
-            <GithubIcon className="text-default-500" />
-          </Link>*/}
-          <ThemeSwitch />
-          <Avatar size="md" src="https://i.pravatar.cc/150?u=a04258114e29026302d" />
-        </NavbarItem>
-        {/*<NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
-        <NavbarItem className="hidden md:flex">
-          <Button
-            isExternal
-            as={Link}
-            className="text-sm font-normal text-default-600 bg-default-100"
-            href={siteConfig.links.sponsor}
-            startContent={<HeartFilledIcon className="text-danger" />}
-            variant="flat"
-          >
-            Sponsor
-          </Button>
-        </NavbarItem>*/}
-      </NavbarContent>
-
-      <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-        <Link isExternal aria-label="Github" href={siteConfig.links.github}>
-          <GithubIcon className="text-default-500" />
-        </Link>
-        <ThemeSwitch />
+      {/* Hamburger ซ้าย (มือถือ) */}
+      <NavbarContent className="xl:hidden basis-1/5" justify="start">
         <NavbarMenuToggle />
-        <Avatar size="lg" src="https://i.pravatar.cc/150?u=a04258114e29026302d" />
       </NavbarContent>
 
-      <NavbarMenu>
-        {searchInput}
+      {/* Logo ตรงกลาง (มือถือ) */}
+      <NavbarContent className="xl:hidden flex-1 items-center">
+        <Navbarlogo />
+      </NavbarContent>
+
+      {/* Avatar ขวา (มือถือ) */}
+      <NavbarContent className="sm:hidden basis-1/5 flex justify-end px-0" justify="end">
+        <Link href="/user">
+
+          <Avatar size="md" src="/user/avatar.png" />
+
+        </Link>
+      </NavbarContent>
+
+      {/* เมนูด้านขวา (Desktop) */}
+      <NavbarContent className="hidden sm:flex basis-1/5 justify-end" justify="end">
+        <NavbarItem className="flex gap-2 items-center">
+          {/*<ThemeSwitch />*/}
+          <Avatar size="md" src="/user/avatar.png" />
+        </NavbarItem>
+      </NavbarContent>
+
+
+      <NavbarMenu className="flex flex-col justify-between h-full">
         <div className="mx-4 mt-2 flex flex-col gap-2">
+          {searchInput}
           {siteConfig.navMenuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
-                color={
-                  index === 2
-                    ? "primary"
-                    : index === siteConfig.navMenuItems.length - 1
-                      ? "danger"
-                      : "foreground"
-                }
-                href="#"
+                color={pathname === item.href ? "primary" : "danger"}
+                href={item.href}
                 size="lg"
               >
                 {item.label}
               </Link>
             </NavbarMenuItem>
           ))}
+        </div>
+
+        <div className="mx-4 mt-4 mb-6">
+          {isLogin ? (
+            <Button className="w-full" color="danger" onPress={handleOut}>
+              ออกจากระบบ
+            </Button>
+          ) : (
+            <Button className="w-full" color="primary" onPress={() => router.push("/signin")}>
+              เข้าสู่ระบบ
+            </Button>
+          )}
         </div>
       </NavbarMenu>
     </HeroUINavbar>

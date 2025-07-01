@@ -9,7 +9,7 @@ export const siteConfig = {
       href: "/",
     },
     {
-      label: "Docs",
+      label: "Employee",
       href: "/docs",
     },
     {
@@ -27,36 +27,32 @@ export const siteConfig = {
   ],
   navMenuItems: [
     {
-      label: "Profile",
-      href: "/profile",
+      label: "Home",
+      href: "/",
     },
     {
-      label: "Dashboard",
-      href: "/dashboard",
+      label: "Partlist",
+      href: "/partlist",
     },
     {
-      label: "Projects",
-      href: "/projects",
+      label: "Robot PRM",
+      href: "/robot/prm",
     },
     {
-      label: "Team",
-      href: "/team",
+      label: "Robot Anodize",
+      href: "/robot/ano",
     },
     {
-      label: "Calendar",
-      href: "/calendar",
+      label: "Robot PPP",
+      href: "/robot/ppp",
     },
     {
-      label: "Settings",
-      href: "/settings",
+      label: "Robot HTP",
+      href: "/robot/htp",
     },
     {
-      label: "Help & Feedback",
-      href: "/help-feedback",
-    },
-    {
-      label: "Logout",
-      href: "/logout",
+      label: "Robot PNT",
+      href: "/robot/pnt",
     },
   ],
   links: {
